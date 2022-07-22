@@ -49,8 +49,11 @@ Run Gradle ‘wrapper’ (Build Setup > wrapper) task to generate Gradle wrapper
 https://docs.gradle.org/current/javadoc/index.html
 
 https://docs.gradle.org/current/userguide/base_plugin.html
-https://docs.gradle.org/current/userguide/java_plugin.html
-https://docs.gradle.org/current/userguide/plugin_reference.html
-https://docs.gradle.org/current/userguide/declaring_repositories.html
-https://docs.gradle.org/current/userguide/declaring_dependencies.html
 
+https://docs.gradle.org/current/userguide/java_plugin.html
+
+https://docs.gradle.org/current/userguide/plugin_reference.html
+
+https://docs.gradle.org/current/userguide/declaring_repositories.html
+
+https://docs.gradle.org/current/userguide/declaring_dependencies.html

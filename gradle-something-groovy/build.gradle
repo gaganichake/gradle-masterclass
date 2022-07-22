@@ -1,180 +1,194 @@
-import java.text.SimpleDateFormat
+import java.text.*
 
-defaultTasks 'helloWorld'
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+ 
 
-task('helloWorld').doFirst {
-    println "HelloWorld"
-}
+System.out.println "Hello World now: " + sdf.format(new Date())
 
-println "Scripts written outside of a task will executed first hand!"
 
-task('runJavaCode').doLast {
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
-    System.out.println("Java code also works!");
-    System.out.println "Current time is:" + sdf.format(new Date()) // Braces and semicolon are optional
-    sayHelloWorld()
-}
-
-sayHelloWorld() // You can invoke the method from anywhere - before or after method declaration.
-//inline java code example
 void sayHelloWorld() {
-    println "Inline Java method";
+	println "Hello world!"
 }
 
 sayHelloWorld()
 
-int multiplyInt(int i) {
-    println("Input i=" + i)
-    i * 3 // 'return' keyword is optional
-    //def y = i + 10; // try this
+int doubleIt(int i) {
+	println(i)
+	i * 3
+	def y = i
 }
 
-task("returnKeyword").doFirst {
-    println multiplyInt(2)
-    // println multiplyInt("some string") // This will fail as Groovy is Type safe
-}
+println doubleIt(2)
 
-task("payWithStrings").doFirst {
-    def s1 = "a string"
-    println s1
-    def s2 = 'a string'
-    println s2
+def s1 = "a string"
+def s2 = 'a string'
+def s3 = """ A
+	string
+	on
+	multiple
+	lines
+"""
+String interpolation
+def x = 4
+println "x is $x"
 
-    def s3 = """ A
-string 
-on 
-mltiple
-lines
-    with indentation preserved 
-    yes, you need three double quotes (\"\"\") """
-    println s3
+def myCourse = "gradle"
+println "I'm training in: ${myCourse.toUpperCase()}"
 
-    //String interpolation
-    def x = 4
-    println "Value of x is $x"
 
-    def myCourse = "gradle"
-    println "Add some code in String: ${myCourse.toUpperCase()}" //Note: This will not work with single quote
-}
 
-class Person {
-    String name
+//Properties...
+
+class Person {                       
+
+    String name                      
     Integer age
-
-    Person(name, age) {
+    
+   
+     Person(name, age) {          
         this.name = name
         this.age = age
     }
-    // Getters and Setters in Groovy automatically created.
+
 }
 
-task("settingProperties").doFirst {
-    def person = new Person("Tom", 30)
-    println person.name + ", " + person.age
-    person.age = 31
-    println person.name + ", " + person.age
+def p = new Person("Fred", 35)
+println p.age
+p.age = 36
+println p.age
 
-    Map map = new HashMap()
+// with a Map
 
-    // In Java
-    map.put("one", 1)
-    map.put("two", 2)
-    println map.get("one") + ", " + map.get("two")
+Map m = new HashMap()
 
-    // In Groovy
-    map.three = 3
-    map.four = 4
-    println map.three + ", " + map.four
+m.put("foo", "Fred")
+println m.get("foo")
+
+m.foo = "bill"
+m.bar = "Jane"
+m.baz = "Dave"
+
+m.foo
+m.bar
+m.baz
+
+
+println m.foo
+println m.bar
+println m.baz
+
+//Closures
+
+def echoIt = { parameter ->
+	println parameter
 }
 
-// Important part of Groovy in Gradle
-task("doTheClosure").doFirst {
-    def echoIt = {}
-    println echoIt() // With () you are actually evaluating the code inside the closure
-    println echoIt // Without () you are actually calling a toString() method on that closure
-
-    def echoThis = {
-        println "Hello World!"
-        123 // Closure returns the value on the last statement
-    }
-    println echoThis()
-    println echoThis
+//called like a normal method
+echoIt("Hello World!")
 
 
-    def echoMyParameter = { myParam ->
-        println myParam
-    }
-    println echoMyParameter("Hello World! as parameter")
-
-    def echoItParameter = {
-        println it
-    }
-    println echoItParameter("It is a default parameter!")
-
-    def echoMultiParameter = { a, b, c, d ->
-        println a
-        println b
-        println c
-        println d
-    }
-    println echoMultiParameter("Multi-parameter", "are", "also", "possibe")
+//with type Closure <Interface>
+Closure echoIt2 = { parameter ->
+	println parameter
 }
 
-task("AdvanceClosure").doFirst {
-    // Pass closures as parameters
-    println oneArgMethod({ 10 }) // Parentheses are option
-    println twoArgMethod(2, { 10 })
-    println oneArgMethod({
-        def y = 5
-        y * 2
-    }) // Passing multiline closure
 
-    // Common uses for closure... iterators in Java!
-    for (int j in [1, 2, 3]) {
-        println j
-    }
+//pass closures as parameters
 
-    // Common uses for closure... iterators in Groovy!
-    [1, 2, 3].each {
-        println it // 'it is a default parameter in Groovy
-    }
-
-    // Closure Resolution
-    def emp = new Employee()
-    emp.nameSayer()
-
-    def theName = "John"
-    def sayName = {
-        println theName
-    }
-    sayName()
-    theName = "Bill"
-    sayName()
-
-    // THIS IS NOT WORKING
-    // Dynamic code block - as a Labmda function
-    def emp2 = new Employee()
-    def closure = { name.toUpperCase() }
-    closure.delegate = emp2
-    assert closure() == "FRED"
-}
-
-// Pass closures as parameter
 def oneArgMethod(closure) {
-    closure() * 2
+	closure() * 2
 }
 
-// Pass closures as parameter
-def twoArgMethod(factor, closure) {
-    closure() * factor
+println oneArgMethod {10}
+
+
+
+
+def twoArgMethod(factor, closure){
+	closure() * factor
 }
 
-class Employee {
-    String name = "Fred"
+println twoArgMethod(3, {10})
 
-    def nameSayer = {
-        println name
+twoArgMethod 3, {10}
+
+
+def i = oneArgMethod {
+	def y = 3
+	y * 2
+}
+
+assert i == 12
+
+//common uses for closure ... iterators!
+for (int j in [1,2,3]){
+	println j
+}
+
+[1,2,3].each {
+	println it
+}
+
+
+
+// Closure resolution
+
+
+
+class Person1 {                       
+
+    String name = "Fred"                     
+    
+	Closure nameSayer = {
+		println name
+	}
+}
+
+def p1 = new Person1()
+p1.nameSayer()
+
+// Closed over a context
+def theName = "John"
+def sayName = {
+	println theName
+}
+sayName()
+theName = "Fred"
+sayName()
+
+
+
+class Person2 {                       
+
+    String theName                      
+    Integer theAge
+    
+   
+     Person2(theName, theAge) {          
+        this.theName = theName
+        this.theAge = theAge
     }
+
+
+	def executeInside(Closure c){
+		c.delegate = this
+		c()
+	}
+
 }
+
+def p2 = new Person2("Fred", 35)
+println p2.theName
+
+p2.executeInside {println theName}
+
+
+// Core Gradle Objects
+
+logger.info "Hello!"
+
+apply {
+	println "Hello again!!"
+}
+

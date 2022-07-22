@@ -1,0 +1,83 @@
+println ">>> build.gradle --> This is executed during the configuration phase  - timestamp @ ${gradle.timestamp()}"
+
+// Evaluate the closure directly using 'apply' method
+apply {
+    println "Hello again! Evaluate this closure directly using 'apply' method"
+}
+
+println "Script interface is implemented in all types of Gradle scripts. Any property reference or method call which is not found on this Script object is forwarded to the delegate object."
+println "init.gradle delegates to object of type Gradle interface"
+println "settings.gradle delegates to object of type Settings interface"
+println "build.gradle delegates to object of type Project interface"
+println "settings.gradle and build.gradle have access to all objects in init.gradle"
+//https://docs.gradle.org/current/javadoc/org/gradle/api/Script.html
+//https://docs.gradle.org/current/javadoc/org/gradle/api/invocation/Gradle.html
+//https://docs.gradle.org/current/javadoc/org/gradle/api/initialization/Settings.html
+//https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html
+
+logger.info "******************************************************************************"
+logger.info "Hello! 'logger' is a property of Script interface"
+
+logger.info ">>> build.gradle: $project.gradle.gradleVersion"
+logger.info ">>> build.gradle: $project.gradle.gradleHomeDir"
+logger.info ">>> build.gradle: $project.gradle.gradleUserHomeDir"
+
+logger.info ">>> build.gradle: $project.buildFile"
+logger.info ">>> build.gradle: ${project.relativePath(buildFile)}"
+
+
+logger.info """
+******************************************************************************
+Welcome to Gradle $gradle.gradleVersion - http://www.gradle.org
+Gradle home is set to: $gradle.gradleHomeDir
+Gradle user directory is set to: $gradle.gradleUserHomeDir
+Base directory: $projectDir
+Running script  ${relativePath(buildFile)}
+******************************************************************************
+"""
+
+//Properties
+logger.info "Playing with Gradle properties"
+
+logger.info "has property: ${project.gradle.hasProperty('$gradleVersion')}"
+
+logger.info "has property: ${hasProperty('projectDir')}"
+
+
+logger.info project.gradlePropertiesProp
+logger.info "has property: ${project.hasProperty('gradlePropertiesProp')}"
+
+
+if (project.hasProperty('gradlePropertiesProp')) {
+    logger.info "The property file value is $gradlePropertiesProp"
+} else {
+    logger.info "Oops! gradlePropertiesProp can't be found"
+}
+
+
+if (project.hasProperty('commandLineProjectProp')) {
+    logger.info "The property file value is $commandLineProjectProp"
+} else {
+    logger.info "Oops! commandLineProjectProp can't be found"
+}
+
+
+project.ext.sayHello = "Hello!"
+if (project.hasProperty('sayHello')) {
+    logger.info project.sayHello
+} else {
+    logger.info "Unable to say Hello!"
+}
+
+if (project.gradle.hasProperty('timestamp')) {
+    logger.info project.gradle.timestamp()
+} else {
+    logger.info "Oops! timestamp() unavailable!"
+}
+
+
+if (project.ext.has('timestamp')) {
+    logger.info project.timestamp()
+} else {
+    logger.info "Oops! timestamp() unavailable!"
+}

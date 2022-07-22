@@ -1,0 +1,73 @@
+defaultTasks 'hello', 'hi'
+// defaultTasks Sets the names of the default tasks of this project.
+// These are used when no tasks names are provided when starting the build.
+// and executed in the defined order
+
+logger.info ">>> build.gradle --> This is executed during the configuration phase"
+
+// Creating a task: Option 1
+task hi
+
+project.hi.doLast {
+	logger.info "Hi"
+}
+
+// See task fields & methods https://docs.gradle.org/current/javadoc/org/gradle/api/Task.html
+
+// Creating a task: Option 2
+task hello {
+			description = "Log the name of the Task"
+			group = "Welcome" 
+			
+			doFirst{
+				logger.info "My name is: $name and this is my 1st defined Action"
+			}
+			
+			doLast{
+				logger.info "My name is: $name and this is my 2nd defined Action"
+			}
+}
+
+logger.info hello.description
+logger.info hello.group
+
+// All doFirst methods are executed in the sequence they are declared.
+// All doLast methods are executed after all doFirst methods have finished executing.
+// All doLast methods are executed in the sequence they are declared.
+
+/*
+hello.doLast{
+	logger.info "My name is: $name and this is my 4th defined Action"
+}
+
+hello.doLast{
+	logger.info "My name is: $name and this is my 3nd defined Action"
+}
+
+
+hello.doFirst{
+	logger.info "My name is: $name and this is my 5th defined Action!! but executed when?"
+}
+
+*/
+
+/*
+task hello2 {
+		description = "Log the name of the Task"
+		group = "Welcome" 				
+}
+
+// Each task method returns a task object, so you can do method chaining.
+hello2.doFirst{
+	logger.info "My name is: $name and this is my 1st defined Action"
+}.doLast{
+	logger.info "My name is: $name and this is my 2nd defined Action"
+}.doLast{
+	logger.info "My name is: $name and this is my 4th defined Action"
+}.doLast{
+	logger.info "My name is: $name and this is my 3nd defined Action"
+}.doFirst{
+	logger.info "My name is: $name and this is my 5th defined Action!! but executed when?"
+}
+
+*/

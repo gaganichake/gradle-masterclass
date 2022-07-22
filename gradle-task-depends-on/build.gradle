@@ -1,0 +1,200 @@
+defaultTasks 'doFinished'
+// Introduction to 'dependsOn'
+//defaultTasks 'doStartProcess', 'doStep2', 'doSomethingInTheMiddle', 'doFinished'
+// defining the sequence of tasks in the defaultTask list is actually hard coding them.
+// The better way to define the sequence is the dependsOn feature.
+
+logger.info ">>> build.gradle --> This is executed during the configuration phase"
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+// Array [...] is not required for a single dependency
+task doStep2 (dependsOn: 'doStartProcess') {
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle (dependsOn: ['doStartProcess', 'doStep2']) {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished (dependsOn: ['doSomethingInTheMiddle', 'doStep2'])   {
+	doLast{
+		logger.info "$name - Done - OK!"
+	}	
+}
+
+
+/*
+// Filtering Tasks with 'dependsOn'
+
+defaultTasks 'doFinished'
+
+logger.info ">>> build.gradle --> This is executed during the configuration phase"
+
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2{
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+// Lambda expression with findAll method is used to dynamically pass a dependency
+task doSomethingInTheMiddle (dependsOn: ['doStartProcess',  tasks.findAll { task -> task.name.startsWith('doStep2')  }  ]) {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished (dependsOn: ['doSomethingInTheMiddle', 'doStep2'])   {
+	doLast{
+		logger.info "$name - Done - OK!"
+	}	
+}
+
+
+logger.info ">>> ${ project.tasks.findAll { task -> task.name.startsWith('doStep2')  }  }"
+
+*/
+
+/*
+
+//Add to dependency to existing Task
+
+defaultTasks 'doFinished'
+
+logger.info ">>> build.gradle --> This is executed during the configuration phase"
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2 {
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle  {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished (dependsOn: 'doSomethingInTheMiddle'){
+	doLast{
+		logger.info "$name - Done - OK!"
+	}	
+}
+
+
+logger.info "${ project.tasks.findAll { task -> task.name.startsWith('doStep2')} }"
+
+// Alternate approach on using dependsOn method. Same as task doFinished (dependsOn: ['doSomethingInTheMiddle', 'doStep2']) {...}
+doSomethingInTheMiddle.dependsOn doStartProcess, doStep2
+
+
+//Conditional logic
+if ( Math.random() < 0.5){
+	doSomethingInTheMiddle.dependsOn doStartProcess, tasks.findAll { task -> task.name.startsWith('doStep2') }
+}
+// Lambda expression with findAll method is used to dynamically pass a dependency to a task. See doSomethingInTheMiddle
+// does not originally has a dependsOn
+
+
+*/
+
+
+// The Task Dependency Graph
+//https://docs.gradle.org/current/javadoc/org/gradle/api/execution/TaskExecutionGraph.html
+
+/*
+
+//This will throw error
+// logger.info ">>> $project.gradle.taskGraph.allTasks"
+
+project.gradle.taskGraph.whenReady {
+	logger.info ">>> $project.gradle.taskGraph.allTasks"
+}
+
+*/
+
+
+/*
+
+defaultTasks 'doFinished'
+
+//logger.info ">>> build.gradle --> This is executed during the configuration phase"
+
+
+
+task doStartProcess {
+	doLast{
+		logger.info "$name - Now starting the process - OK!"
+	}
+}
+
+task doStep2{
+	doLast{
+		logger.info "$name - Performed OK!"
+	}
+}
+
+task doSomethingInTheMiddle (dependsOn: ['doStartProcess',  tasks.findAll { task -> task.name.startsWith('doStep2')  }  ]) {
+	doLast{
+		logger.info "$name - Performed the middle step - OK!"
+	}
+}
+
+
+task doFinished {
+	doLast{
+		logger.info "$name - Done - OK! >>> with version=$version"
+	}
+}
+
+
+
+//Conditional logic
+if ( Math.random() < 0.5){
+	doFinished.dependsOn doSomethingInTheMiddle, doStep2
+}
+
+project.gradle.taskGraph.whenReady {taskGraph ->
+    if (taskGraph.hasTask(doStep2)) {
+        project.version = '1.0'
+    } else {
+        project.version = '1.0-SNAPSHOT'
+    }
+}
+
+ project.gradle.taskGraph.beforeTask{task ->
+  	logger.info "+++ Before task $task.name"
+ }
+
+ project.gradle.taskGraph.afterTask{task ->
+  	logger.info "+++ Finished task $task.name"
+ }
+
+
+*/
